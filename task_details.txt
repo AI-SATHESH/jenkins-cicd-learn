@@ -1,0 +1,8 @@
+Task - 1
+1. Create a Docker file to run a python FastAPI application.
+	1.1 - use dockerignore file to remove requirements.txt, __pycache__/, .git/, task_details.txt folders and files
+	1.2 -  minimize docker image size while building image.
+2. Run a python application using docker compose in a port 8002. (Note: container port should be 8080 and host port should be 8002)
+
+
+
