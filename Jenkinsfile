@@ -21,14 +21,8 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "
                                 mkdir -p ${destinationDir} && 
                                 if [ -d ${destinationDir}${repoName} ]; then 
-                                    rm -rf ${destinationDir}; 
+                                    rm -rf ${destinationDir}${repoName}; 
                                 fi"
-                        """
-
-                         sh """
-
-                            ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "mkdir -p ${destinationDir}"
-
                         """
 
                         // Clone the repository into the destination directory with the updated changes
