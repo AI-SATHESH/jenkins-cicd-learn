@@ -25,6 +25,12 @@ pipeline {
                                 fi"
                         """
 
+                         sh """
+
+                            ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "mkdir -p ${destinationDir}"
+
+                        """
+
                         // Clone the repository into the destination directory with the updated changes
                         sh """
                             ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "cd ${destinationDir} && git clone ${repoUrl} --branch main"
