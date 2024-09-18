@@ -1,42 +1,44 @@
 pipeline {
     agent {
-        label 'windows-slave2' // The label for your Windows agent
+        label 'windows-slave2' // Ensure the agent is correctly labeled
     }
 
     triggers {
         githubPush() // Trigger the pipeline on GitHub push events
     }
-    
+
     stages {
-        stage('Clone Repository on Windows Machine') {
+        stage('Clone Repository to Destination Path') {
             steps {
                 script {
-                    def destinationDir = 'C:\\Jenkins\\workspace\\repo'  // Windows path for cloning the repo
                     def repoUrl = 'https://github.com/AI-SATHESH/jenkins-cicd-learn.git'
-                    def repoName = 'jenkins-cicd-learn'
+                    def destinationDir = 'C:\\Users\\Administrator\\Desktop\\allfiles' // Destination path
 
-                    // Check if the directory exists and remove if necessary, then clone the repository
+                    // Clean up the old directory if it exists
                     bat """
-                        if exist ${destinationDir}\\${repoName} (
-                            rd /s /q ${destinationDir}\\${repoName}
-                        )
+                        if exist ${destinationDir} (rd /s /q ${destinationDir})
                         mkdir ${destinationDir}
-                        git clone ${repoUrl} ${destinationDir}\\${repoName}
                     """
 
-                    // Optionally, remove the Jenkinsfile from the cloned repository (if needed)
+                    // Clone the repository into the destination directory
                     bat """
-                        del ${destinationDir}\\${repoName}\\Jenkinsfile
+                        git clone ${repoUrl} ${destinationDir}
+                    """
+                    
+                    // Optionally remove the Jenkinsfile from the cloned repository in the destination
+                    bat """
+                        del ${destinationDir}\\Jenkinsfile
                     """
                 }
             }
         }
     }
-    
+
     post {
         always {
-            // Clean up workspace after build
-            cleanWs()
+            // Clean the Jenkins workspace
+            cleanWs() // This ensures that the Jenkins workspace is cleaned after the job completes
+            echo 'Pipeline completed and workspace cleaned, but files retained in destination.'
         }
     }
 }
