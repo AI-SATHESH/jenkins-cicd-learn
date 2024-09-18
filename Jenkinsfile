@@ -24,6 +24,7 @@ pipeline {
                         // Clone the repository into the destination directory
                         sh """
                             ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "cd ${destinationDir} && git clone ${repoUrl} --branch main"
+                            rm jenkinsfile
                         """
                     }
                 }
