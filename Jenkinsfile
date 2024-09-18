@@ -1,40 +1,33 @@
 pipeline {
-    agent any
+    agent {
+        label 'windows-slave2' // The label for your Windows agent
+    }
 
     triggers {
         githubPush() // Trigger the pipeline on GitHub push events
     }
     
     stages {
-        stage('Clone Repository on Remote Machine') {
+        stage('Clone Repository on Windows Machine') {
             steps {
-                sshagent(['ubuntu']) { // Use the correct credentials ID here
-                    script {
-                        def remoteIP = '15.207.55.58'
-                        def destinationDir = '/home/ubuntu/repo/'
-                        def repoUrl = 'https://github.com/AI-SATHESH/jenkins-cicd-learn.git'
-                        def repoName = 'jenkins-cicd-learn'
-                        def user = 'ubuntu'
+                script {
+                    def destinationDir = 'C:\\Jenkins\\workspace\\repo'  // Windows path for cloning the repo
+                    def repoUrl = 'https://github.com/AI-SATHESH/jenkins-cicd-learn.git'
+                    def repoName = 'jenkins-cicd-learn'
 
-                        // Create the destination directory if it doesn't exist and remove the existing repository if it exists
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "
-                                mkdir -p ${destinationDir} && 
-                                if [ -d ${destinationDir}${repoName} ]; then 
-                                    rm -rf ${destinationDir}${repoName}; 
-                                fi"
-                        """
+                    // Check if the directory exists and remove if necessary, then clone the repository
+                    bat """
+                        if exist ${destinationDir}\\${repoName} (
+                            rd /s /q ${destinationDir}\\${repoName}
+                        )
+                        mkdir ${destinationDir}
+                        git clone ${repoUrl} ${destinationDir}\\${repoName}
+                    """
 
-                        // Clone the repository into the destination directory with the updated changes
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "cd ${destinationDir} && git clone ${repoUrl} --branch main"
-                        """
-
-                        // Remove the Jenkinsfile from the cloned repository on the remote machine
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "cd ${destinationDir}${repoName} && rm -f Jenkinsfile"
-                        """
-                    }
+                    // Optionally, remove the Jenkinsfile from the cloned repository (if needed)
+                    bat """
+                        del ${destinationDir}\\${repoName}\\Jenkinsfile
+                    """
                 }
             }
         }
