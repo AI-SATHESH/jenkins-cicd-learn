@@ -21,7 +21,7 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no ${user}@${remoteIP} "
                                 mkdir -p ${destinationDir} && 
                                 if [ -d ${destinationDir}${repoName} ]; then 
-                                    rm -rf ${destinationDir}${repoName}; 
+                                    rm -rf ${destinationDir}; 
                                 fi"
                         """
 
